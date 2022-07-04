@@ -39,7 +39,3 @@ def reset():
     if quantidade() >= 0:
         resetar_id = ('ALTER TABLE table_user AUTO_INCREMENT = 1')  # Resetar o ID, quando não houver mais senhas
         cursor.execute(resetar_id)
-
-def privacidade():
-    driver.find_element(By.XPATH, '//*[@id="details-button"]').click()
-    driver.find_element(By.XPATH, '//*[@id="proceed-link"]').click()
