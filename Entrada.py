@@ -1,6 +1,7 @@
 from Back import *
 import pymysql
 from selenium import webdriver
+from time import sleep
 #Criar conexão
 conexao = pymysql.connect(host='localhost',port=3306,database='gerenciador_senhas',
                           user='root',password='root@123',autocommit=True)
@@ -53,30 +54,89 @@ while True:
                 plataforma_desejada = int(input("Qual você quer acessar? "))
                 for linha2 in select():
                     if plataforma_desejada == linha2[3]: #Comparando, para quando o valor varrido for o desejado pelo usuário, exibir após o if
-                        print()
-                        print("Plataforma:", linha2[0])
-                        print("Login:", linha2[1])
-                        print("Senha: *******")
-                        #2print("Senha:", linha2[1])
-                        print()
+                        revelar = input('\033[;31mGostaria de revelar a senha? [s/n]\033[;1m ').lower()
+                        if revelar == 's':
+                            print()
+                            print("Plataforma:", linha2[0])
+                            print("Login:", linha2[1])
+                            print("Senha:", linha2[2])
+                            print()
+                        else:
+                            print()
+                            print("Plataforma:", linha2[0])
+                            print("Login:", linha2[1])
+                            print("Senha: *******")
+                            print()
                         deseja_acessar = input('Deseja acessar automaticamente à plataforma? [s/n] ').lower()
                         if deseja_acessar == 's': #automação
                             driver = webdriver.Chrome(executable_path=r"C:\Users\jenni\chromedriver\chromedriver")
-                            try:
-                                driver.get(f'https://www.{linha2[0]}.com.br')
-                                campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
-                                campo_login.send_keys(linha2[1])
+                            if linha2[0] == 'FACEBOOK':
+                                try:
+                                    driver.get(f'https://www.facebook.com.br')
+                                    campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
+                                    campo_login.send_keys(linha2[1])
+                                    campo_password = driver.find_element(By.CSS_SELECTOR, '#pass')
+                                    campo_password.send_keys(linha2[2] + Keys.RETURN)
+                                except:
+                                    driver.find_element(By.XPATH, '//*[@id="details-button"]').click()
+                                    driver.find_element(By.XPATH, '//*[@id="proceed-link"]').click()
+                                    driver.get(f'https://www.{linha2[0]}.com.br')
+                                    campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
+                                    campo_login.send_keys(linha2[1])
+                                    campo_password = driver.find_element(By.CSS_SELECTOR, '#pass')
+                                    campo_password.send_keys(linha2[2] + Keys.RETURN)
 
-                                campo_password = driver.find_element(By.CSS_SELECTOR, '#pass')
-                                campo_password.send_keys(linha2[2] + Keys.RETURN)
-                            except:
-                                driver.find_element(By.XPATH,'//*[@id="details-button"]').click()
-                                driver.find_element(By.XPATH,'//*[@id="proceed-link"]').click()
-                                driver.get(f'https://www.{linha2[0]}.com.br')
-                                campo_login = driver.find_element(By.CSS_SELECTOR, "#email")
-                                campo_login.send_keys(linha2[1])
-                                campo_password = driver.find_element(By.CSS_SELECTOR, '#pass')
-                                campo_password.send_keys(linha2[2] + Keys.RETURN)
+                            elif linha2[0] == 'INSTAGRAM':
+                                try:
+                                    driver.get('https://www.instagram.com/accounts/login/')
+                                    sleep(2)
+                                    driver.find_element(By.XPATH, '//*[@id="loginForm"]/div/div[1]/div/label/input'
+                                                        ).send_keys(linha2[1] + Keys.TAB + linha2[2] + Keys.RETURN)
+                                except:
+                                    driver.find_element(By.XPATH, '//*[@id="details-button"]').click()
+                                    driver.find_element(By.XPATH, '//*[@id="proceed-link"]').click()
+                                    driver.get('https://www.instagram.com/accounts/login/')
+                                    sleep(2)
+                                    driver.find_element(By.XPATH, '//*[@id="loginForm"]/div/div[1]/div/label/input'
+                                                        ).send_keys(linha2[1] + Keys.TAB + linha2[2] + Keys.RETURN)
+                            elif linha2[0] == 'TIKTOK':
+                                try:
+                                    driver.get(
+                                        'https://www.tiktok.com/login?enter_from=live_detail&hide_close_btn=1&is_modal=1&lang=en&no_refactor=1&redirect_url=https%3A%2F%2Fwww.tiktok.com%2F%40kati_well%2Flive&type=')
+                                    driver.find_element(By.XPATH,
+                                                        '//*[@id="root"]/div/div[1]/div/div[1]/div[2]/div[2]/div[2]').click()
+                                    driver.find_element(By.XPATH, '//*[@id="root"]/div/div[1]/form/div[1]/a').click()
+                                    sleep(2)
+                                    driver.find_element(By.XPATH,
+                                                        '//*[@id="root"]/div/div[1]/form/div[2]/div/input').send_keys(
+                                        linha2[1] + Keys.TAB + linha2[2] + Keys.RETURN)
+
+                                except:
+                                    driver.get(
+                                        'https://www.tiktok.com/login?enter_from=live_detail&hide_close_btn=1&is_modal=1&lang=en&no_refactor=1&redirect_url=https%3A%2F%2Fwww.tiktok.com%2F%40kati_well%2Flive&type=')
+                                    driver.find_element(By.XPATH,
+                                                        '//*[@id="root"]/div/div[1]/div/div[1]/div[2]/div[2]/div[2]').click()
+                                    driver.find_element(By.XPATH, '//*[@id="root"]/div/div[1]/form/div[1]/a').click()
+                                    driver.find_element(By.XPATH,
+                                                        '//*[@id="root"]/div/div[1]/div/div[1]/div[2]/div[2]/div[2]').click()
+                                    driver.find_element(By.XPATH, '//*[@id="root"]/div/div[1]/form/div[1]/a').click()
+                                    sleep(2)
+                                    driver.find_element(By.XPATH,
+                                                        '//*[@id="root"]/div/div[1]/form/div[2]/div/input').send_keys(
+                                        linha2[1] + Keys.TAB + linha2[2] + Keys.RETURN)
+
+                            elif linha2[0] == 'GITHUB':
+                                try:
+                                    driver.get('https://github.com/login')
+                                    driver.find_element(By.CSS_SELECTOR, '#login_field').send_keys(
+                                        linha2[1] + Keys.TAB + linha2[2] + Keys.RETURN)
+                                except:
+                                    driver.get('https://github.com/login')
+                                    driver.find_element(By.XPATH, '//*[@id="details-button"]').click()
+                                    driver.find_element(By.XPATH, '//*[@id="proceed-link"]').click()
+                                    driver.find_element(By.CSS_SELECTOR, '#login_field').send_keys(
+                                        linha2[1] + Keys.TAB + linha2[2] + Keys.RETURN)
+
                         else:
                             pass
             else:
